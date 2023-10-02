@@ -9,7 +9,7 @@ test.beforeEach(async({page}) => {
    await page.getByText("Form Layouts").click()
 })
 
-test('Locator systax rules', async({page}) => {
+test('Locator syntax rules', async({page}) => {
    //by Tage name
    await page.locator('input').first().click()
    // by ID
@@ -49,5 +49,34 @@ test('locating child elements', async({page}) => {
    await page.locator('nb-card').getByRole('button', {name: "Sign in"}).first().click()
    await page.locator('nb-card').nth[3].getByRole('button').click()
 })
+
+test('locating parent element', async({page}) => {
+   await page.locator('nb-card',{hasText: "Using the Grid"}).getByRole('textbox', {name: "Email"}).click()
+   await page
+     .locator("nb-card", { has: page.locator("inputEmail1") })
+     .getByRole("textbox", { name: "Email" })
+     .click()
+   await page
+     .locator("nb-card")
+     .filter({ hasText: "Basic form" })
+     .getByRole("textbox", { name: "Email" })
+     .click()
+     await page
+       .locator("nb-card")
+       .filter({ has: page.locator(".status-danger") })
+       .getByRole("textbox", { name: "Password" })
+       .click()
+       await page
+         .locator("nb-card")
+         .filter({ has: page.locator('nb-checkbox')})
+         .filter({ hasText: "Sign in"})
+         .getByRole("textbox", { name: "Email"})
+         .click()
+         await page
+           .locator(':test-is("Using the Grid")')
+           .locator("..")
+           .getByRole("textbox", { name: "Email" })
+           .click()
+}) 
 
 
