@@ -1,6 +1,7 @@
-import {test} from '@playwright/test'
 
-test.beforeAll(() => {
+import { test, expect } from "@playwright/test"
+
+test.beforeAll(() => { //general preconditions
   
 })
 test.beforeEach(async({page}) => {
@@ -22,10 +23,10 @@ test('Locator syntax rules', async({page}) => {
    page.locator(
      '[class="input-full-width size-medium status-basic shape-rectangle nb-transition"]'
 )
-   //combine diffrent selection tag+atribut
+   //combine different selection tag+atribut
    page.locator('input placeholder = "Email"')
    //by XPath (this Not recommend)
-   page.locator('//*[@id="#inputEmail1"')
+   page.locator('//*[@id="#inputEmail1"]')
 
    // by partial text match
    page.locator(':text("Using")')
@@ -61,12 +62,12 @@ test('locating parent element', async({page}) => {
      .filter({ hasText: "Basic form" })
      .getByRole("textbox", { name: "Email" })
      .click()
-     await page
-       .locator("nb-card")
-       .filter({ has: page.locator(".status-danger") })
-       .getByRole("textbox", { name: "Password" })
-       .click()
-       await page
+   await page
+      .locator("nb-card")
+      .filter({ has: page.locator(".status-danger") })
+      .getByRole("textbox", { name: "Password" })
+      .click()
+   await page
          .locator("nb-card")
          .filter({ has: page.locator('nb-checkbox')})
          .filter({ hasText: "Sign in"})
@@ -78,5 +79,25 @@ test('locating parent element', async({page}) => {
            .getByRole("textbox", { name: "Email" })
            .click()
 }) 
+ test('Reusing locators', async({page}) => {
+    const basicForm = page.locator("nb-card").filter({ hasText: "Basic form" })
+    const emailField = basicForm.getByRole('textbox', { name: "Email"})
+    const passwordField = basicForm.getByRole("textbox", { name: "Password" })
+    
+    await emailField.fill('test@test.com')
+    await passwordField.fill("Welcome123")
+    await basicForm.locator('nb-checkbox').click()
+    await basicForm.getByRole("button").click()
 
+    await expect(emailField).toHaveValue('test@test.com')
+   })
+
+   test('extacting', async ({page}) => {
+      const basicForm = page
+        .locator("nb-card")
+        .filter({ hasText: "Basic form"})
+        const buttonText = await basicForm.locator('button').textContent()
+        expect(buttonText).toEqual('Submit')
+        //
+   })
 
