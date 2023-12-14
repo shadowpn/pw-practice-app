@@ -125,4 +125,27 @@ test('web tables', async ({page}) => {
     await page.locator('input-editor').getByPlaceholder('E-mail').fill('test@test.com') //Заполняет это же поле значением 'test@test.com'.
     await page.locator('.nb-checkmark').click() //Снова кликает по кнопке с классом .nb-checkmark, чтобы сохранить изменения.
     await expect(targetRowById.locator('td').nth(5)).toHaveText('test@test.com')//Проверяет, что пятая ячейка в измененной строке содержит текст 'test@test.com', подтверждая успешное редактирование.
+    
+    //3 test filter of the table 
+
+    const ages = ["20", "30", "40", "200"] //Объявляет массив ages, содержащий строки со значениями "20", "30", "40", "200". Эти значения будут использоваться для фильтрации строк в таблице.
+
+    for( let age of ages) { //Цикл for...of, который итерирует по каждому элементу массива ages.
+        await page.locator('input-filter').getByPlaceholder('Age').clear() //Находит поле ввода с плейсхолдером 'Age' и очищает его. input-filter — это селектор для поля ввода фильтра.
+        await page.locator('input-filter').getByPlaceholder('Age').fill(age) //Заполняет это же поле ввода текущим значением возраста (age) из массива ages.
+        await page.waitForTimeout(500) //Ожидает 500 миллисекунд. Это может быть сделано для ожидания обновления данных в таблице после фильтрации.
+        const ageRows = page.locator('tbody tr') //Находит все строки (tr) в теле таблицы (tbody) и сохраняет их в переменной ageRows.
+       
+        for(let row of await ageRows.all()) { //Второй цикл for...of, который проходит по каждой строке (row), найденной в ageRows.
+            const cellValue = await row.locator('td').last().textContent() //Получает текстовое содержимое последней ячейки (td) в текущей строке (row).
+
+            if(age == "200") { //Условный оператор, который проверяет, равно ли текущее значение age "200".
+                expect(await page.getByRole('table').textContent()).toContain('No data found') //Если age равно "200", проверяет, что текст в таблице содержит фразу "No data found". Это предполагает, что для нереалистичного возраста "200" данных в таблице не найдено.
+            } else {
+                   expect(cellValue).toEqual(age) //В противном случае (для значений "20", "30", "40"), проверяет, что текст последней ячейки в каждой строке соответствует текущему значению age, что означает успешную фильтрацию таблицы по возрасту.
+                }
+            }
+            
+        }
+
 })
