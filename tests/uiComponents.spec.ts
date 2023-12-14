@@ -144,8 +144,33 @@ test('web tables', async ({page}) => {
             } else {
                    expect(cellValue).toEqual(age) //В противном случае (для значений "20", "30", "40"), проверяет, что текст последней ячейки в каждой строке соответствует текущему значению age, что означает успешную фильтрацию таблицы по возрасту.
                 }
-            }
-            
+            }           
         }
+})
+
+test('Datepicker', async ({page}) => {
+    await page.getByText('Forms').click()
+    await page.getByText('Datepicker').click() //Эти строки находят и кликают по элементам с текстом "Forms" и "Datepicker" соответственно. Это обычно используется для навигации по веб-странице, возможно, открывая форму с виджетом выбора даты.
+
+    const calendarInputField = page.getByPlaceholder('Form Picker') //Находит поле ввода календаря по его плейсхолдеру "Form Picker".
+    await calendarInputField.click() //Кликает по найденному полю ввода календаря для его активации (чтобы открыть виджет выбора даты).
+
+    let date = new Date() //Создает объект Date, содержащий текущую дату и время.
+    date.setDate(date.getDate() + 7) //Устанавливает дату объекта date на 7 дней вперед от текущей даты.
+    const expectedDate = date.getDate().toString() //Получают числовую часть даты, сокращенное и полное название месяца на английском языке и год из объекта date.
+    const expectedMonthShot = date.toLocaleString('En-US', {month: 'short'})
+    const expectedMonthLong = date.toLocaleString('En-US', {month: 'long'})
+    const expectedYear = date.getFullYear()
+    const dateToAssert = `${expectedMonthShot} ${expectedDate}, ${expectedYear}`
+
+    let calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent() //Получает текст, который представляет текущий месяц и год в виджете календаря.
+    const expectedMonthAndYear = ` ${expectedMonthLong} ${expectedYear}` //Формирует строку с ожидаемым месяцем и годом.
+    while(!calendarMonthAndYear.includes(expectedMonthAndYear)){ //Цикл проверяет, совпадает ли текущий месяц и год в календаре с ожидаемыми. Если нет, кликает по стрелке для перехода к следующему месяцу, пока не найдет нужный месяц.
+        await page.locator('nb-calendar-pageable-navigation [data-name="chevron-right"]').click()
+        calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    }
+    await page.locator('[class="day-cell ng-star-inserted"]').getByText(expectedDate, {exact: true}).click() //Находит и кликает по ячейке календаря с ожидаемым числом. {exact: true} указывает на то, что выбор осуществляется по точному соответствию текста.
+    
+    await expect(calendarInputField).toHaveValue(dateToAssert) //Проверяет, что значение в поле календаря соответствует ожидаемой сформированной дате.
 
 })
