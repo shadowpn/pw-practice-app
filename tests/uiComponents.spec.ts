@@ -174,3 +174,31 @@ test('Datepicker', async ({page}) => {
     await expect(calendarInputField).toHaveValue(dateToAssert) //Проверяет, что значение в поле календаря соответствует ожидаемой сформированной дате.
 
 })
+
+test('Slider', async({page}) => {
+    await page.getByText("IoT Dashboard").click()
+    
+    //Update attribute
+    const tempGauge = page.locator('[tabtitle="Temperature"] ngx-temperature-dragger circle') //Находит элемент слайдера температуры и изменяет его атрибуты 'cx' и 'cy' для имитации перемещения слайдера.
+     await tempGauge.evaluate( node => {
+        node.setAttribute('cx', '232.630')
+        node.setAttribute('cy', '232.630')
+     })
+     await tempGauge.click() //Выполняет клик по элементу слайдера.
+
+
+    //mouse movement
+    const tempBox = page.locator('[tabtitle="Temperature"] ngx-temperature-dragger') //Находит контейнер слайдера, получает его размеры и позицию, и перемещает мышь к центру этого элемента.
+    await tempBox.scrollIntoViewIfNeeded()
+    const box = await tempBox.boundingBox()
+    const x = box.x + box.width / 2
+    const y = box.y + box.height / 2
+
+    await  page.mouse.move(x, y)
+
+    await page.mouse.down() //Имитирует действие перетаскивания (drag-and-drop) слайдера, перемещая мышь на определенное расстояние вправо и вниз.
+    await page.mouse.move(x+100, y)
+    await page.mouse.move(x+100, y+100)
+    await page.mouse.up()
+    await expect(tempBox).toContainText('30') //Проверяет, что в результате перетаскивания слайдера отображается значение '30'.
+})
