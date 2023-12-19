@@ -1,7 +1,8 @@
 import {test, expect} from '@playwright/test'
-import {NavigationPage} from '../page-objects/navigationPage'
-import { FormLayoutsPage } from '../page-objects/formLayoutsPage'
-import { DatePickerPage }  from '../page-objects/datepickerPage'
+import {PageManager} from '../page-objects/pageManager'
+//import {NavigationPage} from '../page-objects/navigationPage' - эти 3 импорта не нужно потому что мы уже импортируем Page Manager а там уже все конструкции есть 
+//import { FormLayoutsPage } from '../page-objects/formLayoutsPage'
+//import { DatePickerPage }  from '../page-objects/datepickerPage'
 
 
 test.beforeEach(async({page}) => {
@@ -10,25 +11,27 @@ test.beforeEach(async({page}) => {
 })
 
 test('navigate to home page', async({page}) => { //Определение теста с названием 'navigate to home page'.
-    const navigateTo = new NavigationPage(page) //Создает новый экземпляр класса NavigationPage, передавая ему текущий объект page. Этот класс предположительно предназначен для упрощения навигации по страницам веб-приложения.
+    const pm = new PageManager(page)
+    //const navigateTo = new NavigationPage(page) //Создает новый экземпляр класса NavigationPage, передавая ему текущий объект page. Этот класс предположительно предназначен для упрощения навигации по страницам веб-приложения.
 
-    await navigateTo.formLayoutsPage() //Вызывает метод formLayoutsPage экземпляра navigateTo
-    await navigateTo.datepickerPage()
-    await navigateTo.smartTablePage()
-    await navigateTo.toastrtPage()
-    await navigateTo.tooltipPage()
+    await pm.navigateTo().formLayoutsPage() //Вызывает метод formLayoutsPage экземпляра navigateTo
+    await pm.navigateTo().datepickerPage()
+    await pm.navigateTo().smartTablePage()
+    await pm.navigateTo().toastrtPage()
+    await pm.navigateTo().tooltipPage()
 })
 
 test('parametraized method', async({page}) => {
-    const navigateTo = new NavigationPage(page)
-    const onFormLayoutsPage = new FormLayoutsPage(page)
-    const onDatepickerDate = new DatePickerPage(page)
+    const pm = new PageManager(page)
+    //const navigateTo = new NavigationPage(page) -> если уаотребляем page manager то это константа не нужна
+    //const onFormLayoutsPage = new FormLayoutsPage(page)
+    //const onDatepickerPage = new DatePickerPage(page)
 
-    await navigateTo.formLayoutsPage()
-    await onFormLayoutsPage.submitUsingTheGridFormWithCredentialsAndSelectionOption('shadowpn@gmail.com', '12345', 'Option 2')
-    await onFormLayoutsPage.submitInlineFormWithNameEmailAndCheckbox("Nataliia", 'test1@test.com', true)
-    await navigateTo.datepickerPage()
-    await onDatepickerDate.selectCommonDatePickerDateFromToday(1)
-    await onDatepickerDate.selectDatepickerWithRangeFromToday(6, 10)
+    await pm.navigateTo().formLayoutsPage()
+    await pm.onFormLayoutsPage().submitUsingTheGridFormWithCredentialsAndSelectionOption('shadowpn@gmail.com', '12345', 'Option 2')
+    await pm.onFormLayoutsPage().submitInlineFormWithNameEmailAndCheckbox("Nataliia", 'test1@test.com', true)
+    await pm.navigateTo().datepickerPage()
+    await pm.onDatepickerPage().selectCommonDatePickerDateFromToday(1)
+    await pm.onDatepickerPage().selectDatepickerWithRangeFromToday(6, 10)
 })
 
