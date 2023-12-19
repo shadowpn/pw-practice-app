@@ -1,9 +1,11 @@
 import {Page, expect} from '@playwright/test'
+import { HelperBase } from './helperBase'
 
-export class DatePickerPage {
-    private readonly page: Page
+export class DatePickerPage extends HelperBase {
+    //private readonly page: Page
     constructor(page: Page) { //Конструктор класса, который принимает объект страницы (Page) и инициализирует свойство page этим объектом.
-       this.page = page
+       //this.page = page
+       super(page)
     }
     async selectCommonDatePickerDateFromToday(numberOfDateFromToday: number) { 
         const calendarInputField = this.page.getByPlaceholder('Form Picker') //Находит поле ввода календаря по его плейсхолдеру "Form Picker".

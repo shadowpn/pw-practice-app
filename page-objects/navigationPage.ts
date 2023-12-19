@@ -1,14 +1,18 @@
 import { Page } from "@playwright/test"
-export class NavigationPage { //Определяет класс NavigationPage, который будет экспортирован для использования в других частях теста.
+import { HelperBase } from "./helperBase"
+
+export class NavigationPage extends HelperBase { //Определяет класс NavigationPage, который будет экспортирован для использования в других частях теста.
     
-    readonly page: Page //Объявляет свойство page, которое является экземпляром класса Page из Playwright. Модификатор readonly указывает, что это свойство может быть присвоено только один раз (обычно в конструкторе).
+    //readonly page: Page //Объявляет свойство page, которое является экземпляром класса Page из Playwright. Модификатор readonly указывает, что это свойство может быть присвоено только один раз (обычно в конструкторе).
     constructor(page: Page) { //Конструктор класса, который принимает объект страницы (Page) и инициализирует свойство page этим объектом.
-       this.page = page
+       //this.page = page
+       super(page) // если добавляем super(page) то убираем  readonly page: Page и this.page = page они нам больше не нужны
     }
     async formLayoutsPage() { //Асинхронный метод formLayoutsPage, который при вызове выполняет навигацию на страницу форм.
         await this.page.getByText("Forms").click() //Внутри метода formLayoutsPage, сначала находит и кликает по элементу с текстом "Forms", затем по элементу с текстом "Form Layouts" на странице.
         await this.selectGroupMenuItem('Forms') //Внутри метода formLayoutsPage, сначала находит и кликает по элементу с текстом "Forms", затем по элементу с текстом "Form Layouts" на странице.
         await this.page.getByText("Form Layouts").click()
+        await this.waitForNumberOfSeconds(2)
     }
     async datepickerPage() {
 
