@@ -1,12 +1,13 @@
 import {test, expect} from '@playwright/test'
 import {PageManager} from '../page-objects/pageManager'
+import {faker}  from '@faker-js/faker'
 //import {NavigationPage} from '../page-objects/navigationPage' - эти 3 импорта не нужно потому что мы уже импортируем Page Manager а там уже все конструкции есть 
 //import { FormLayoutsPage } from '../page-objects/formLayoutsPage'
 //import { DatePickerPage }  from '../page-objects/datepickerPage'
 
 
 test.beforeEach(async({page}) => {
-   await page.goto("http://localhost:4200/")
+   await page.goto('http://localhost:4200/')
    
 })
 
@@ -23,15 +24,18 @@ test('navigate to home page', async({page}) => { //Определение тес
 
 test('parametraized method', async({page}) => {
     const pm = new PageManager(page)
+    const randomFullName = faker.person.fullName()
+    const randomEmail = `${randomFullName.replace(' ', '')} ${faker.number.int(100)}@test.com` //получаем рамдомный имейл с заменнопробуда между именем и фамилией  + цифра
+
     //const navigateTo = new NavigationPage(page) -> если уаотребляем page manager то это константа не нужна
     //const onFormLayoutsPage = new FormLayoutsPage(page)
     //const onDatepickerPage = new DatePickerPage(page)
 
     await pm.navigateTo().formLayoutsPage()
     await pm.onFormLayoutsPage().submitUsingTheGridFormWithCredentialsAndSelectionOption('shadowpn@gmail.com', '12345', 'Option 2')
-    await pm.onFormLayoutsPage().submitInlineFormWithNameEmailAndCheckbox("Nataliia", 'test1@test.com', true)
-    await pm.navigateTo().datepickerPage()
-    await pm.onDatepickerPage().selectCommonDatePickerDateFromToday(1)
-    await pm.onDatepickerPage().selectDatepickerWithRangeFromToday(6, 10)
+    await pm.onFormLayoutsPage().submitInlineFormWithNameEmailAndCheckbox(randomFullName, 'test1@test.com', true)
+    // await pm.navigateTo().datepickerPage()
+    // await pm.onDatepickerPage().selectCommonDatePickerDateFromToday(1)
+    // await pm.onDatepickerPage().selectDatepickerWithRangeFromToday(6, 10)
 })
 

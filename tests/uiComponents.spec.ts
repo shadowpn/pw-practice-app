@@ -4,14 +4,18 @@ test.beforeEach(async({page}) => {
    await page.goto("http://localhost:4200/")
    
 })
-test.describe('Form Layout page', () => {
-    
+test.describe.only('Form Layout page', () => {
+    test.describe.configure({retries: 2})
     test.beforeEach(async({page}) => {
     
     await page.getByText("Forms").click()
     await page.getByText("Form Layouts").click()
     })
-        test('input fields', async({page}) => {
+        test('input fields', async({page}, testInfo) => {
+            if(testInfo.retry) {
+                //do something
+            }
+        
          const usingTheGridEnmailInput = page.locator('nb-card', {hasText: "Using the Grid"}).getByRole('textbox', {name: "Email"})//Объявляет переменную usingTheGridEnmailInput, которая использует локатор для нахождения текстового поля (textbox) внутри компонента 'nb-card' с текстом "Using the Grid". Это текстовое поле идентифицируется по его роли ('textbox') и названию ('Email').
          await usingTheGridEnmailInput.fill('shadowpn@gmail.com') //Заполняет найденное текстовое поле значением 'shadowpn@gmail.com'.
          await usingTheGridEnmailInput.clear() //Очищает текстовое поле от ранее введенных данных.
